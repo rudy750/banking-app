@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Account, Transaction } from '@/lib/types'
 import { AccountCard } from '@/components/AccountCard'
@@ -14,10 +14,20 @@ import {
 } from '@phosphor-icons/react'
 import { Toaster } from '@/components/ui/sonner'
 import { Card } from '@/components/ui/card'
+import sampleData from '@/data/sample-data.json'
 
 function App() {
   const [accounts, setAccounts] = useKV<Account[]>('accounts', [])
   const [transactions, setTransactions] = useKV<Transaction[]>('transactions', [])
+  const [dataLoaded, setDataLoaded] = useState(false)
+
+  useEffect(() => {
+    if (!dataLoaded && (!accounts || accounts.length === 0) && (!transactions || transactions.length === 0)) {
+      setAccounts(sampleData.accounts as Account[])
+      setTransactions(sampleData.transactions as Transaction[])
+      setDataLoaded(true)
+    }
+  }, [dataLoaded, accounts, transactions, setAccounts, setTransactions])
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null)
 
