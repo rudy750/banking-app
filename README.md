@@ -1,6 +1,6 @@
 # 🏦 Banking App
 
-A modern banking application built with [GitHub Spark](https://githubnext.com/projects/github-spark) that provides users with a comprehensive view of their finances, transaction history, and account management capabilities.
+A modern banking application built with [GitHub Spark](https://github.com/features/spark) that provides users with a comprehensive view of their finances, transaction history, and account management capabilities.
 
 ![Banking App](https://img.shields.io/badge/Built%20with-GitHub%20Spark-blue)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
