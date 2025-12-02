@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
 import { Account, Transaction } from '@/lib/types'
 import { AccountCard } from '@/components/AccountCard'
 import { TransactionList } from '@/components/TransactionList'
@@ -17,23 +16,22 @@ import { Card } from '@/components/ui/card'
 import sampleData from '@/data/sample-data.json'
 
 function App() {
-  const [accounts, setAccounts] = useKV<Account[]>('accounts', [])
-  const [transactions, setTransactions] = useKV<Transaction[]>('transactions', [])
+  const [accounts, setAccounts] = useState<Account[]>([])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [dataLoaded, setDataLoaded] = useState(false)
 
   useEffect(() => {
-    if (!dataLoaded && (!accounts || accounts.length === 0) && (!transactions || transactions.length === 0)) {
+    if (!dataLoaded && accounts.length === 0 && transactions.length === 0) {
       setAccounts(sampleData.accounts as Account[])
       setTransactions(sampleData.transactions as Transaction[])
       setDataLoaded(true)
     }
-  }, [dataLoaded, accounts, transactions, setAccounts, setTransactions])
+  }, [dataLoaded, accounts, transactions])
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null)
 
   const handleTransfer = (fromId: string, toId: string, amount: number) => {
     setAccounts((currentAccounts) => {
-      if (!currentAccounts) return []
       return currentAccounts.map((account) => {
         if (account.id === fromId) {
           return { ...account, balance: account.balance - amount }
@@ -49,7 +47,7 @@ function App() {
       id: Date.now().toString(),
       accountId: fromId,
       date: new Date().toISOString(),
-      description: `Transfer to ${(accounts || []).find(a => a.id === toId)?.name}`,
+      description: `Transfer to ${accounts.find(a => a.id === toId)?.name}`,
       amount: amount,
       category: 'Transfer',
       type: 'debit'
@@ -59,7 +57,7 @@ function App() {
       id: (Date.now() + 1).toString(),
       accountId: toId,
       date: new Date().toISOString(),
-      description: `Transfer from ${(accounts || []).find(a => a.id === fromId)?.name}`,
+      description: `Transfer from ${accounts.find(a => a.id === fromId)?.name}`,
       amount: amount,
       category: 'Transfer',
       type: 'credit'
@@ -68,12 +66,11 @@ function App() {
     setTransactions((currentTransactions) => [
       receivingTransaction,
       newTransaction,
-      ...(currentTransactions || [])
+      ...currentTransactions
     ])
   }
 
   const getTotalBalance = () => {
-    if (!accounts) return 0
     return accounts.reduce((sum, account) => {
       if (account.type === 'credit') {
         return sum
@@ -90,8 +87,8 @@ function App() {
   }
 
   const filteredTransactions = selectedAccountId
-    ? (transactions || []).filter((t) => t.accountId === selectedAccountId)
-    : (transactions || [])
+    ? transactions.filter((t) => t.accountId === selectedAccountId)
+    : transactions
 
   const recentTransactions = filteredTransactions.slice(0, 5)
 
@@ -153,7 +150,7 @@ function App() {
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-foreground">Your Accounts</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {(accounts || []).map((account) => (
+                {accounts.map((account) => (
                   <AccountCard
                     key={account.id}
                     account={account}
@@ -166,7 +163,7 @@ function App() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-semibold text-foreground">Recent Activity</h2>
-                {(transactions || []).length > 5 && (
+                {transactions.length > 5 && (
                   <Button variant="ghost" size="sm">
                     View All
                   </Button>
@@ -180,7 +177,7 @@ function App() {
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-foreground">All Accounts</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {(accounts || []).map((account) => (
+                {accounts.map((account) => (
                   <AccountCard
                     key={account.id}
                     account={account}
@@ -212,7 +209,7 @@ function App() {
       <TransferDialog
         open={transferDialogOpen}
         onOpenChange={setTransferDialogOpen}
-        accounts={accounts || []}
+        accounts={accounts}
         onTransfer={handleTransfer}
       />
 
