@@ -40,7 +40,7 @@ GitHub Spark is an experimental project from GitHub Next that allows developers 
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js**: Version 18.x or higher ([Download](https://nodejs.org/))
+- **Node.js**: Version 20.x or higher ([Download](https://nodejs.org/)) - The Codespace uses Node.js 22
 - **npm**: Version 9.x or higher (comes with Node.js)
 - **Git**: For cloning the repository ([Download](https://git-scm.com/))
 
