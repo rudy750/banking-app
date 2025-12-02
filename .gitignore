@@ -32,3 +32,6 @@ pids
 .devcontainer/
 
 .spark-workbench-id
+
+# Allow .devcontainer to be committed for Codespaces support
+!.devcontainer/
